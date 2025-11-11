@@ -9,8 +9,8 @@ const MessageButton: React.FC<MessageButtonProps> = ({ onClick }) => {
   return (
     <button
       onClick={onClick}
-      className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-medium text-sm transition-all duration-200 
-        flex-1 
+      className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gray-100 text-[#374151] font-medium text-sm transition-all duration-200 
+        flex-1 max-w-[153px]
         shadow-md hover:shadow-lg
       "
     >

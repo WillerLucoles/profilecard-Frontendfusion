@@ -43,12 +43,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   }
 
   return (
-    <div className="w-80 rounded-xl bg-white shadow-xl overflow-hidden">
+    <div className="w-100 rounded-xl bg-white shadow-xl overflow-hidden pb-5">
       
-      <div className="h-28 bg-gray-100"></div>
+      <div className="h-28 bg-[#0000001A]"></div>
 
       <div className="flex justify-center -mt-14">
-        <div className="relative w-24 h-24">
+        <div className="relative w-30 h-30">
           <div className="absolute inset-0 rounded-full ring-4 ring-purple-500 ring-opacity-70"></div>
           <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-md">
             <Image
@@ -63,21 +63,21 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 
       <div className="text-center px-6 py-4">
         
-        <h2 className="text-2xl font-bold text-gray-800 mt-2">{name}</h2>
-        <p className="text-sm text-gray-500 mt-1">{role}</p>
+        <h2 className="text-2xl font-bold text-[#1A1A1A] mt-2">{name}</h2>
+        <p className="text-sm text-[#6B7280] mt-1">{role}</p>
 
         <div className="flex justify-around mt-6">
           <div className="text-center">
-            <p className="text-lg font-semibold text-gray-700">{followersCount}</p>
-            <p className="text-xs text-gray-400">Seguidores</p>
+            <p className="text-lg font-bold text-[#1A1A1A]">{followersCount}</p>
+            <p className="text-xs font-medium text-[#9CA3AF]">Seguidores</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-semibold text-gray-700">{following}</p>
-            <p className="text-xs text-gray-400">Seguindo</p>
+            <p className="text-lg font-bold text-[#1A1A1A]">{following}</p>
+            <p className="text-xs font-medium text-[#9CA3AF]">Seguindo</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-semibold text-gray-700">{projects}</p>
-            <p className="text-xs text-gray-400">Projetos</p>
+            <p className="text-lg font-bold text-[#1A1A1A]">{projects}</p>
+            <p className="text-xs font-medium text-[#9CA3AF]">Projetos</p>
           </div>
         </div>
 
@@ -93,8 +93,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         </div>
 
         <div className="text-center mt-6 text-xs text-gray-600">
-          <p>{description}</p>
-          <p className="mt-2 font-medium">{specialties}</p>
+          <p className='font-normal text-[#9CA3AF]'>{description}</p>
+          <p className="mt-2 font-normal text-[#9CA3AF]">{specialties}</p>
         </div>
       </div>
     </div>

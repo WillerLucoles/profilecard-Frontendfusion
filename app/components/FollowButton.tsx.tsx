@@ -11,7 +11,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ isFollowing, onClick }) => 
     <button
       onClick={onClick}
       className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-medium text-sm transition-all duration-300 ease-in-out
-        flex-1 w-0 // <-- A SOLUÇÃO: Define a base como 0 e manda crescer
+        flex-1 max-w-[153px]
         ${
           isFollowing
             ? 'bg-green-500 hover:bg-green-600 shadow-lg shadow-green-500/30 hover:shadow-xl'
