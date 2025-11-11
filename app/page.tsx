@@ -7,12 +7,6 @@ import { userProfileData } from './data/userData';
 export default function ProfilePage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#A06DC2] to-[#8149A7] p-8">
-
-      <Head>
-        <title>Perfil - Ana Silva</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <main className="flex w-full flex-1 flex-col items-center justify-center">
         <ProfileCard
           {...userProfileData}
