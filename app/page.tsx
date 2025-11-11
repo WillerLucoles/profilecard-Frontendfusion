@@ -2,7 +2,6 @@
 
 import Head from 'next/head';
 import ProfileCard from './components/profilecard';
-
 import userAvatar from './assets/AvatarAnaSilva.png';
 
 export default function ProfilePage() {
@@ -23,7 +22,6 @@ export default function ProfilePage() {
           projects={42}
           description="Apaixonada por criar experiências digitais incríveis."
           specialties="Especialista em React e Node.js."
-
           profileImage={userAvatar}
         />
       </main>

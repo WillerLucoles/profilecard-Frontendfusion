@@ -2,8 +2,6 @@
 'use client';
 import React, { useState } from 'react';
 import Image, { StaticImageData } from 'next/image';
-
-// 1. Importamos os novos componentes de botão
 import FollowButton from './FollowButton.tsx';
 import MessageButton from './MessageButton';
 
@@ -29,7 +27,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   specialties,
   profileImage,
 }) => {
-  // 2. O estado e a lógica continuam no componente "pai"
+
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(initialFollowers);
 
@@ -38,10 +36,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     setFollowersCount(isFollowing ? followersCount - 1 : followersCount + 1);
   };
   
-  // (Função de exemplo para o botão de mensagem)
+
   const handleMessageClick = () => {
     console.log(`Enviando mensagem para ${name}...`);
-    // Aqui você poderia abrir um modal, por exemplo
+
   }
 
   return (
@@ -83,7 +81,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           </div>
         </div>
 
-        {/* 3. A mágica acontece aqui! */}
+
         <div className="flex justify-center gap-4 mt-6">
           <FollowButton
             isFollowing={isFollowing}
