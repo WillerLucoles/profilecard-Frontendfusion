@@ -2,7 +2,7 @@
 
 import Head from 'next/head';
 import ProfileCard from './components/profilecard';
-import userAvatar from './assets/AvatarAnaSilva.png';
+import { userProfileData } from './data/userData';
 
 export default function ProfilePage() {
   return (
@@ -15,14 +15,7 @@ export default function ProfilePage() {
 
       <main className="flex w-full flex-1 flex-col items-center justify-center">
         <ProfileCard
-          name="Ana Silva"
-          role="Desenvolvedora Full Stack"
-          followers={980}
-          following={180}
-          projects={42}
-          description="Apaixonada por criar experiências digitais incríveis."
-          specialties="Especialista em React e Node.js."
-          profileImage={userAvatar}
+          {...userProfileData}
         />
       </main>
     </div>
