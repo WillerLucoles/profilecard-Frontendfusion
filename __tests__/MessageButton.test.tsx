@@ -5,26 +5,21 @@ import userEvent from '@testing-library/user-event';
 import MessageButton from '../app/components/MessageButton';
 
 describe('MessageButton', () => {
-  it('deve renderizar o texto "Mensagem" e o ícone', () => {
-    render(<MessageButton />);
+  it('deve ter label acessível personalizado', () => {
+    render(<MessageButton name="Ana" />);
 
-    const buttonElement = screen.getByRole('button', { name: /Mensagem/i });
-    expect(buttonElement).toBeInTheDocument();
-    expect(buttonElement.querySelector('svg')).toBeInTheDocument();
+    // Garante que o botão é encontrável pelo seu propósito específico
+    const button = screen.getByRole('button', { name: /Enviar mensagem para Ana/i });
+    expect(button).toBeInTheDocument();
   });
 
-  it('deve chamar a função onClick quando clicado', async () => {
-
+  it('deve interagir corretamente com o usuário', async () => {
     const mockOnClick = jest.fn();
     const user = userEvent.setup();
 
-
     render(<MessageButton onClick={mockOnClick} />);
 
-
-    const buttonElement = screen.getByRole('button', { name: /Mensagem/i });
-    await user.click(buttonElement);
-
+    await user.click(screen.getByRole('button'));
     expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 });

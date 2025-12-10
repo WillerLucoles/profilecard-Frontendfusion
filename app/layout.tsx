@@ -9,7 +9,7 @@ const inter = Inter({
   display: "swap",
 });
 
-
+// Metadata central do app (Next usa isso para <head>).
 export const metadata: Metadata = {
   title: "Profile Card",
   description: "ProfileCard de Willer Lucoles",

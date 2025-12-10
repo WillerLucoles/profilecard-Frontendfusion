@@ -1,4 +1,3 @@
-// app/components/profilecard.tsx
 'use client';
 import React, { useState, useEffect } from 'react';
 import Image, { StaticImageData } from 'next/image';
@@ -6,6 +5,9 @@ import FollowButton from './FollowButton';
 import MessageButton from './MessageButton';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
+// Props do componente ProfileCard:
+// - name, role, etc. -> informações exibidas no cartão.
+// - profileImage pode ser uma StaticImageData (importada) ou uma URL string.
 interface ProfileCardProps {
   name: string;
   role: string;
@@ -14,7 +16,7 @@ interface ProfileCardProps {
   projects: number;
   description: string;
   specialties: string;
-  profileImage: StaticImageData;
+  profileImage: StaticImageData | string;
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
@@ -27,16 +29,25 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   specialties,
   profileImage,
 }) => {
-  // Usando o Custom Hook: abstrai toda a lógica de persistência e hidratação
+  // useLocalStorage retorna: [valor, setter, flagLoaded]
+  // - isFollowing: estado persistido (vindo do localStorage via hook)
+  // - isStorageLoaded: indica quando o valor guardado foi lido (evita flash/hydration)
   const [isFollowing, setIsFollowing, isStorageLoaded] = useLocalStorage<boolean>(
-    `followState_${name}`, // Chave única por usuário
+    `followState_${name}`, 
     false
   );
 
-  // Estado local derivado para exibição visual imediata
+  // Estado derivado de display: contagem de seguidores que considera o follow local.
+  // Não modifica a fonte original (initialFollowers), apenas ajusta a exibição.
   const [followersCount, setFollowersCount] = useState(initialFollowers);
 
-  // Sincroniza o contador visual quando o storage termina de carregar
+  // Perfil imagem: pode ser StaticImageData (next/image) ou string;
+  // mantemos em estado para permitir fallback em onError.
+  const [imgSrc, setImgSrc] = useState<StaticImageData | string>(profileImage);
+
+  // Sincroniza a contagem de seguidores depois que o valor persistido for carregado.
+  // - Se o armazenamento indicar que o usuário já segue, soma 1 ao initialFollowers.
+  // - isStorageLoaded evita discrepância entre SSR/CSR.
   useEffect(() => {
     if (isStorageLoaded && isFollowing) {
       setFollowersCount(initialFollowers + 1);
@@ -46,57 +57,64 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   }, [isStorageLoaded, isFollowing, initialFollowers]);
 
   const handleFollowToggle = () => {
-    const newState = !isFollowing;
-    setIsFollowing(newState); // O hook salva automaticamente no localStorage
+    setIsFollowing(!isFollowing);
   };
 
   const handleMessageClick = () => {
     console.log(`Enviando mensagem para ${name}...`);
-    alert(`Funcionalidade de mensagem para ${name} em breve!`);
   };
 
   return (
     <article className="w-100 rounded-xl bg-white shadow-xl overflow-hidden pb-5 transition-transform hover:scale-[1.01] duration-300">
-      <div className="h-28 bg-[#0000001A]" aria-hidden="true"></div>
+      
+      <div className="h-28 bg-overlay" aria-hidden="true"></div>
 
       <div className="flex justify-center -mt-14">
         <div className="relative w-30 h-30">
           <div className="absolute inset-0 rounded-full ring-4 ring-purple-500 ring-opacity-70 animate-pulse"></div>
           <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-md bg-white">
             <Image
-              src={profileImage}
+              src={imgSrc}
               alt={`Foto de perfil de ${name}`}
               className="w-full h-full object-cover"
               priority
-              placeholder="blur" 
+              placeholder={typeof imgSrc !== 'string' ? "blur" : undefined}
+              // Fallback: se a imagem falhar (ex.: import quebrado ou URL inválida),
+              onError={() => {
+                setImgSrc(`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`);
+              }}
             />
           </div>
         </div>
       </div>
 
       <div className="text-center px-6 py-4">
-        <h2 className="text-2xl font-bold text-[#1A1A1A] mt-2">{name}</h2>
-        <p className="text-sm text-[#6B7280] mt-1">{role}</p>
+        <h2 className="text-2xl font-bold text-primary mt-2">{name}</h2>
+        <p className="text-sm text-secondary mt-1">{role}</p>
 
         <div className="flex justify-around mt-6" role="list">
+          {/* Uso de role="list" e role="listitem" para melhorar a navegação por AT,
+              principalmente quando o conteúdo é puramente informacional (número + label). */}
           <div className="text-center" role="listitem">
-            {/* Exibe o número correto apenas após carregar o storage para evitar 'pulo' visual */}
-            <p className="text-lg font-bold text-[#1A1A1A]">
+            <p className="text-lg font-bold text-primary">
+              {/* Exibe contagem segura apenas após o carregamento do storage */}
               {isStorageLoaded ? followersCount : initialFollowers}
             </p>
-            <p className="text-xs font-medium text-[#9CA3AF]">Seguidores</p>
+            <p className="text-xs font-medium text-tertiary">Seguidores</p>
           </div>
           <div className="text-center" role="listitem">
-            <p className="text-lg font-bold text-[#1A1A1A]">{following}</p>
-            <p className="text-xs font-medium text-[#9CA3AF]">Seguindo</p>
+            <p className="text-lg font-bold text-primary">{following}</p>
+            <p className="text-xs font-medium text-tertiary">Seguindo</p>
           </div>
           <div className="text-center" role="listitem">
-            <p className="text-lg font-bold text-[#1A1A1A]">{projects}</p>
-            <p className="text-xs font-medium text-[#9CA3AF]">Projetos</p>
+            <p className="text-lg font-bold text-primary">{projects}</p>
+            <p className="text-xs font-medium text-tertiary">Projetos</p>
           </div>
         </div>
 
         <div className="flex justify-center gap-4 mt-6">
+          {/* Passa `name` para FollowButton para permitir keys únicas no localStorage
+              e facilitar testes (ex.: checar followState_<name> no storage). */}
           <FollowButton
             isFollowing={isFollowing}
             onClick={handleFollowToggle}
@@ -104,12 +122,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           />
           <MessageButton
             onClick={handleMessageClick}
+            name={name}
           />
         </div>
 
         <div className="text-center mt-6 text-xs text-gray-600">
-          <p className='font-normal text-[#9CA3AF]'>{description}</p>
-          <p className="mt-2 font-normal text-[#9CA3AF]">{specialties}</p>
+          <p className='font-normal text-tertiary'>{description}</p>
+          <p className="mt-2 font-normal text-tertiary">{specialties}</p>
         </div>
       </div>
     </article>

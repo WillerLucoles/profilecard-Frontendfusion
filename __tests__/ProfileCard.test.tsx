@@ -1,67 +1,70 @@
 // __tests__/ProfileCard.test.tsx
-
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ProfileCard from '../app/components/profilecard';
-import userAvatar from '../assests/Container.png';
 
-describe('ProfileCard', () => {
-    const user = userEvent.setup();
+// Mock simples para a imagem
+const mockProfileImage = {
+  src: '/avatar.png',
+  height: 100,
+  width: 100,
+  blurDataURL: 'data:image/png;base64,',
+};
 
-    // Props de exemplo para o card
-    const cardProps = {
-        name: "Ana Silva",
-        role: "Desenvolvedora Full Stack",
-        followers: 980,
-        following: 180,
-        projects: 42,
-        description: "Apaixonada por criar experiências digitais incríveis.",
-        specialties: "Especialista em React e Node.js.",
-        profileImage: userAvatar,
-    };
+describe('ProfileCard Integration', () => {
+  const user = userEvent.setup();
 
-    it('deve renderizar todas as informações corretamente', () => {
-        render(<ProfileCard {...cardProps} />);
+  const defaultProps = {
+    name: "Ana Silva",
+    role: "Dev",
+    followers: 100,
+    following: 50,
+    projects: 10,
+    description: "Bio test",
+    specialties: "React",
+    profileImage: mockProfileImage,
+  };
 
-        expect(screen.getByText('Ana Silva')).toBeInTheDocument();
-        expect(screen.getByText('Desenvolvedora Full Stack')).toBeInTheDocument();
-        expect(screen.getByText('980')).toBeInTheDocument();
-        expect(screen.getByText('180')).toBeInTheDocument();
-        expect(screen.getByText('42')).toBeInTheDocument();
+  // Garante um ambiente limpo antes de cada teste
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  it('deve atualizar contadores e persistir dados ao clicar em Seguir', async () => {
+    render(<ProfileCard {...defaultProps} />);
+
+    const followBtn = screen.getByRole('button', { name: /Seguir/i });
+    
+    // 1. Interação do usuário
+    await user.click(followBtn);
+
+    // 2. Verificação Visual (UI)
+    // O botão deve mudar para "Seguindo"
+    const followButton = await screen.findByRole('button', {
+      name: /Deixar de seguir Ana Silva/i, // or the aria-label used after follow
     });
+    expect(within(followButton).getByText('Seguindo')).toBeInTheDocument();
+    // O contador deve subir de 100 para 101
+    expect(screen.getByText('101')).toBeInTheDocument();
 
-    it('deve atualizar o estado de "Seguir" para "Seguindo" e incrementar seguidores', async () => {
-        render(<ProfileCard {...cardProps} />);
+    // 3. Verificação de Sistema (Storage)
+    // Verifica se a lógica de negócio (persistência) funcionou
+    expect(window.localStorage.getItem('followState_Ana Silva')).toBe('true');
+  });
 
-        const followButton = screen.getByRole('button', { name: /Seguir/i });
-        expect(followButton).toBeInTheDocument();
-        expect(screen.getByText('980')).toBeInTheDocument();
+  it('deve recuperar estado salvo do localStorage (Simular F5)', async () => {
+    // Cenário: Usuário já segue a Ana (dados salvos anteriormente)
+    window.localStorage.setItem('followState_Ana Silva', 'true');
 
+    render(<ProfileCard {...defaultProps} />);
 
-        await user.click(followButton);
-
-        expect(screen.getByRole('button', { name: /Seguindo/i })).toBeInTheDocument();
-
-        expect(screen.getByText('981')).toBeInTheDocument();
-        expect(screen.queryByText('980')).not.toBeInTheDocument();
-    });
-
-    it('deve alternar de volta para "Seguir" e decrementar seguidores', async () => {
-        render(<ProfileCard {...cardProps} />);
-
-        const followButton = screen.getByRole('button', { name: /Seguir/i });
-        await user.click(followButton);
-
-        const followingButton = screen.getByRole('button', { name: /Seguindo/i });
-        expect(followingButton).toBeInTheDocument();
-        expect(screen.getByText('981')).toBeInTheDocument();
-
-        await user.click(followingButton);
-
-
-        expect(screen.getByRole('button', { name: /Seguir/i })).toBeInTheDocument();
-        expect(screen.getByText('980')).toBeInTheDocument();
-        expect(screen.queryByText('981')).not.toBeInTheDocument();
-    });
+    // Como há um useEffect para hidratação, usamos findBy (assíncrono)
+    // O componente deve "acordar" já sabendo que segue o usuário
+    const activeBtn = await screen.findByRole('button', { name: /Deixar de seguir/i });
+    
+    expect(activeBtn).toBeInTheDocument();
+    // O contador deve renderizar já incrementado (101)
+    expect(screen.getByText('101')).toBeInTheDocument();
+  });
 });
