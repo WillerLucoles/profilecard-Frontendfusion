@@ -23,9 +23,6 @@ const FollowButton: React.FC<FollowButtonProps> = ({ isFollowing, onClick, name 
         group flex items-center justify-center gap-2 px-6 py-3 rounded-lg 
         text-white font-medium text-sm transition-all duration-300 ease-in-out
         flex-1 max-w-[153px]
-        
-        /* Estilos de Foco (Acessibilidade via Teclado) */
-        /* Remove o outline padrão e adiciona um anel de foco visível e customizado */
         focus:outline-none focus-visible:ring-4 focus-visible:ring-offset-2
         
         ${
